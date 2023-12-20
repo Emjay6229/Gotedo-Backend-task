@@ -19,7 +19,13 @@
 */
 
 import Route from '@ioc:Adonis/Core/Route'
+import RequestsController from 'App/Controllers/Http/RequestsController'
 
 Route.get('/', async () => {
   return { hello: 'world' }
 })
+
+Route.post('/log-request', new RequestsController().handleRequest)
+Route.get('/users', new RequestsController().getUsers)
+Route.get('/requests', new RequestsController().getRequests)
+Route.get('/request/:id', new RequestsController().getSingleRequest)
