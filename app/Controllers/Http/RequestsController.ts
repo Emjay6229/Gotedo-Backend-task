@@ -5,7 +5,7 @@ import { schema, rules } from '@ioc:Adonis/Core/Validator'
 import Application from '@ioc:Adonis/Core/Application'
 
 export default class RequestsController {
-  public async handleRequest({ request, response }: HttpContextContract) {
+  public async handleCreateSupportRequest({ request, response }: HttpContextContract) {
     // Define validation schema
     const newRequestSchema = schema.create({
       firstName: schema.string(),
@@ -23,32 +23,43 @@ export default class RequestsController {
       // validate requests
       const payload = await request.validate({ schema: newRequestSchema })
 
-      // check if user exists in the users table
-      const checkEmail = await User.findBy('email', payload.emailAddress)
-      if (!checkEmail) return "This user doesn't exist in the users table"
-
-      // create and save a new request
       const supportRequest = new SupportRequest()
+
+      const user = await User.findBy('email_address', payload.emailAddress)
+
+      /* If user doesn't exist in the users table, create new user 
+          and establish table relationship using user id.
+      */
+      if (!user) {
+        const userObj = {
+          full_name: `${payload.firstName} ${payload.lastName}`,
+          email_address: payload.emailAddress,
+        }
+
+        const newUser = await User.create(userObj)
+        supportRequest.user_id = newUser.id
+      } else {
+        supportRequest.user_id = user.id
+      }
 
       supportRequest.first_name = payload.firstName
       supportRequest.last_name = payload.lastName
       supportRequest.email_address = payload.emailAddress
       supportRequest.message_title = payload.messageTitle
       supportRequest.message_body = payload.messageBody
-      supportRequest.user_id = payload.emailAddress
 
       // Handle file upload
-      if (payload.file && payload.file.isValid) {
-        await payload.file.move(Application.tmpPath('file-uploads'))
-        supportRequest.file_name = payload.file.clientName
-      } else {
-        console.log('Problem with file. Check file upload or file type')
-      }
+      if (!payload.file || !payload.file.isValid) return 'File Not Uploaded'
 
+      await payload.file?.move(Application.tmpPath('file-uploads'))
+      supportRequest.file_name = payload.file?.clientName
+
+      // save request and return response
       await supportRequest.save()
 
       return response.status(201).json({
         supportRequest,
+        fileUpload: 'Successful',
         isPersisted: supportRequest.$isPersisted,
       })
     } catch (error) {
@@ -59,19 +70,18 @@ export default class RequestsController {
   public async getAllUsers({ response }: HttpContextContract) {
     try {
       const users = await User.all()
-      return response.status(201).json(users)
+      return response.status(200).json(users)
     } catch (error) {
       response.badRequest(error.messages)
     }
   }
 
-  public getRequests() {}
-
-  public async getRequestByUserId({ request, response }: HttpContextContract) {
+  // Show multiple Support Request with same email
+  public async showMultipleSupportRequest({ params, response }: HttpContextContract) {
     try {
-      const params = request.params()
-      const requests = await SupportRequest.findBy('email', params.id)
-      return response.status(201).json(requests)
+      const email = params.email
+      const requests = await SupportRequest.findBy('email_address', email)
+      return response.status(200).json(requests)
     } catch (error) {
       response.badRequest(error.messages)
     }

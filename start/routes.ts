@@ -25,7 +25,6 @@ Route.get('/', async () => {
   return { hello: 'world' }
 })
 
-Route.post('/log-request', new RequestsController().handleRequest)
+Route.post('/log-request', new RequestsController().handleCreateSupportRequest)
 Route.get('/users', new RequestsController().getAllUsers)
-Route.get('/requests', new RequestsController().getRequests)
-Route.get('/request/:id', new RequestsController().getRequestByUserId)
+Route.get('/request/:email', new RequestsController().showMultipleSupportRequest)

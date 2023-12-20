@@ -12,11 +12,7 @@ export default class extends BaseSchema {
       table.string('message_title')
       table.text('message_body')
       table.string('file_name').nullable()
-      table.string('user_id').notNullable()
-
-      /**
-       * Uses timestamptz for PostgreSQL and DATETIME2 for MSSQL
-       */
+      table.integer('user_id').notNullable()
       table.timestamp('created_at', { useTz: true })
       table.timestamp('updated_at', { useTz: true })
     })

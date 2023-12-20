@@ -3,7 +3,6 @@ import User from 'App/Models/User'
 
 export default class extends BaseSeeder {
   public async run() {
-    // Write your database queries inside the run method
     await User.createMany([
       {
         full_name: 'Jane Doe',

@@ -25,7 +25,7 @@ export default class SupportRequest extends BaseModel {
   public file_name?: string
 
   @column()
-  public user_id: string
+  public user_id: number
 
   @column.dateTime({ autoCreate: true })
   public createdAt: DateTime
