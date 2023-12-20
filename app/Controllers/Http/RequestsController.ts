@@ -80,7 +80,7 @@ export default class RequestsController {
   public async showMultipleSupportRequest({ params, response }: HttpContextContract) {
     try {
       const email = params.email
-      const requests = await SupportRequest.findBy('email_address', email)
+      const requests = await SupportRequest.query().where('email_address', email)
       return response.status(200).json(requests)
     } catch (error) {
       response.badRequest(error.messages)
