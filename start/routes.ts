@@ -26,6 +26,6 @@ Route.get('/', async () => {
 })
 
 Route.post('/log-request', new RequestsController().handleRequest)
-Route.get('/users', new RequestsController().getUsers)
+Route.get('/users', new RequestsController().getAllUsers)
 Route.get('/requests', new RequestsController().getRequests)
-Route.get('/request/:id', new RequestsController().getSingleRequest)
+Route.get('/request/:id', new RequestsController().getRequestByUserId)

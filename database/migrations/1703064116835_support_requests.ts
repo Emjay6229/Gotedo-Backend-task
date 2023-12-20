@@ -8,11 +8,11 @@ export default class extends BaseSchema {
       table.increments('id')
       table.string('first_name')
       table.string('last_name')
-      table.string('email_address').unique().notNullable()
+      table.string('email_address').notNullable()
       table.string('message_title')
       table.text('message_body')
       table.string('file_name').nullable()
-      table.string('user_id').unique().notNullable()
+      table.string('user_id').notNullable()
 
       /**
        * Uses timestamptz for PostgreSQL and DATETIME2 for MSSQL
