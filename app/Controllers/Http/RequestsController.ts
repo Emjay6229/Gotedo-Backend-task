@@ -54,7 +54,7 @@ export default class RequestsController {
 
   public async getAllUsers({ response }: HttpContextContract) {
     try {
-      const users = await User.all()
+      const users = await User.query().select('*').orderBy('id')
       return response.status(200).json(users)
     } catch (error) {
       response.badRequest(error.messages)
