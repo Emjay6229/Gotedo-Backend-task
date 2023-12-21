@@ -1,30 +1,15 @@
 import type { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
 import SupportRequest from 'App/Models/SupportRequest'
 import User from 'App/Models/User'
-import { schema, rules } from '@ioc:Adonis/Core/Validator'
+import requestValidator from 'App/Validators/SupportRequestValidator'
 import Application from '@ioc:Adonis/Core/Application'
 
 export default class RequestsController {
   public async handleCreateSupportRequest({ request, response }: HttpContextContract) {
-    // Define validation schema
-    const newRequestSchema = schema.create({
-      firstName: schema.string(),
-      lastName: schema.string(),
-      emailAddress: schema.string({}, [rules.email()]),
-      messageTitle: schema.string(),
-      messageBody: schema.string(),
-      file: schema.file.optional({
-        size: '5mb',
-        extnames: ['pdf', 'jpg', 'png'],
-      }),
-    })
-
     try {
-      // validate requests
-      const payload = await request.validate({ schema: newRequestSchema })
-
       const supportRequest = new SupportRequest()
 
+      const payload = await request.validate(requestValidator)
       const user = await User.findBy('email_address', payload.emailAddress)
 
       /* If user doesn't exist in the users table, create new user 
@@ -54,7 +39,6 @@ export default class RequestsController {
       await payload.file?.move(Application.tmpPath('file-uploads'))
       supportRequest.file_name = payload.file?.clientName
 
-      // save request and return response
       await supportRequest.save()
 
       return response.status(201).json({
