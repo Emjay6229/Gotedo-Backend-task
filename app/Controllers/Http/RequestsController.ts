@@ -16,12 +16,11 @@ export default class RequestsController {
           and establish table relationship using user id.
       */
       if (!user) {
-        const userObj = {
+        const newUser = await User.create({
           full_name: `${payload.firstName} ${payload.lastName}`,
           email_address: payload.emailAddress,
-        }
+        })
 
-        const newUser = await User.create(userObj)
         supportRequest.user_id = newUser.id
       } else {
         supportRequest.user_id = user.id
