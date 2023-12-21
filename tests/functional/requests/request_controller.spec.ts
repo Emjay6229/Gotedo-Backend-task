@@ -1,4 +1,5 @@
 import { test } from '@japa/runner'
+import { file } from '@ioc:Adonis/Core/Helpers'
 
 test.group('Requests request controller', () => {
   test('submit a support request', async ({ client }) => {
@@ -10,7 +11,13 @@ test.group('Requests request controller', () => {
       messageBody: 'This is a test support request.',
     }
 
-    const response = await client.post('/log-request').fields(fields)
+    const fakeAvatar = await file.generatePng('5mb')
+
+    const response = await client
+      .post('/api/log-request')
+      .file('avatar', fakeAvatar.contents, { filename: fakeAvatar.name })
+      .fields(fields)
+
     response.assertStatus(200)
     console.log(response.body())
   })

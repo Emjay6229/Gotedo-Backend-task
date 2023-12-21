@@ -25,6 +25,8 @@ Route.get('/', async () => {
   return { hello: 'world' }
 })
 
-Route.post('/log-request', new RequestsController().handleCreateSupportRequest)
-Route.get('/users', new RequestsController().getAllUsers)
-Route.get('/request/:email', new RequestsController().showMultipleSupportRequest)
+Route.group(() => {
+  Route.post('/log-request', new RequestsController().handleCreateSupportRequest)
+  Route.get('/users', new RequestsController().getAllUsers)
+  Route.get('/:email', new RequestsController().showMultipleSupportRequest)
+}).prefix('/api')

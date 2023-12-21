@@ -24,8 +24,8 @@ export default class SupportRequestValidator {
    *    ```
    */
   public schema = schema.create({
-    firstName: schema.string(),
-    lastName: schema.string(),
+    firstName: schema.string([rules.alpha()]),
+    lastName: schema.string([rules.alpha()]),
     emailAddress: schema.string({}, [rules.email()]),
     messageTitle: schema.string(),
     messageBody: schema.string(),
