@@ -47,7 +47,7 @@ export default class RequestsController {
         isPersisted: supportRequest.$isPersisted,
       })
     } catch (error) {
-      response.badRequest(error.messages)
+      response.badRequest(error.message)
     }
   }
 
@@ -56,7 +56,7 @@ export default class RequestsController {
       const users = await User.query().select('*').orderBy('id')
       return response.status(200).json(users)
     } catch (error) {
-      response.badRequest(error.messages)
+      response.badRequest(error.message)
     }
   }
 
@@ -67,7 +67,7 @@ export default class RequestsController {
       const requests = await SupportRequest.query().where('email_address', email)
       return response.status(200).json(requests)
     } catch (error) {
-      response.badRequest(error.messages)
+      response.badRequest(error.message)
     }
   }
 }
